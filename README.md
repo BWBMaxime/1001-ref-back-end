@@ -17,9 +17,6 @@ Le mockup et la base de données seront réalisés en travail commun.
 **Technologies :**
 
 VueJS version 3
-
 PHP 7.4
-
 Symfony 5 en tant qu'API REST
-
 MySQL
