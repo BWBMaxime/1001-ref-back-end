@@ -106,6 +106,11 @@ class User
      */
     private $subscribers;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Account::class, mappedBy="account", cascade={"persist", "remove"})
+     */
+    private $account;
+
     public function __construct()
     {
         $this->favorites = new ArrayCollection();
@@ -344,6 +349,23 @@ class User
         if ($this->subscribers->removeElement($subscriber)) {
             $subscriber->removeFavorite($this);
         }
+
+        return $this;
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account): self
+    {
+        // set the owning side of the relation if necessary
+        if ($account->getAccount() !== $this) {
+            $account->setAccount($this);
+        }
+
+        $this->account = $account;
 
         return $this;
     }
