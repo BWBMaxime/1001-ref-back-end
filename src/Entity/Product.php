@@ -213,4 +213,39 @@ class Product
 
         return $this;
     }
+
+    /**
+     * Hydrates the product with a form
+     */
+    public function hydrate($data, $doctrine){
+
+        $this->setName($data['name']);
+        $this->setCategory($data['category']);
+        $this->setDescription($data['description']);
+        $this->setActive(false);
+        $this->setNew(true);
+
+        foreach ($data['variations'] as $variation) 
+        {
+
+            $newVariation = new Variation();
+
+            $newVariation->setProduct($this);
+            $newVariation->setContainer($variation['contenant']);
+            $newVariation->setConditioning($variation['conditionnement']);
+            $newVariation->setCapacity($variation['contenance']);
+            $newVariation->setDealerPrice($variation['prixRevendeur']);
+            $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+            $this->addVariation($newVariation);
+        }
+
+        foreach ($data['tags'] as $tag) 
+        {
+            $newTag = $doctrine->getRepository(Tags::class)->findOneBy(['name'=>$tag['name']]);
+            //$product->addTag($newTag);
+        }
+
+        $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>1]);
+        $this->setOwner($owner);
+    }
 }
