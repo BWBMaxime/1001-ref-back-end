@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Address;
+use App\Entity\Account;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,41 +31,22 @@ class AccountController extends AbstractController
 
         $user = $entityManager->getRepository(User::class)->findBy(['mail' => $form["mail"]]);
         
-
         // si l'utilisateur n'existe pas
         if($user == null){
+
             // On instancie un nouvel utilisateur
-            $user = new User();
+            $user = new User;
+            // On hydrate l'objet user
+            $user->hydrate($form);
+        
 
-            // On hydrate l'objet
-            $user->setName($form["name"]);
-            $user->setFirstname($form["firstname"]);
-            $user->setCompany($form["company"]);
-            $user->setPhone($form["phone"]);
-            $user->setMail($form["mail"]);
-            $user->setPassword($form["password"]);
-            $user->setSiret($form["siret"]);
-            $user->setBiography($form["biography"]);
-            $user->setCompanyLogo($form["companyLogo"]);
-
-           
-            $newAddress = new Address();
-            $newAddress->setNumber($form['address']['number']);
-            $newAddress->setRoad($form['address']['road']);
-            $newAddress->setCity($form['address']['city']);
-            $newAddress->setZipcode($form['address']['zipcode']);
-            $newAddress->setCountry($form['address']['country']);
-
-            $user->setAddress($newAddress);
-
-            $user->setFacebook($form["facebook"]);
-            $user->setLinkedin($form["linkedin"]);
-            $user->setWebsite($form["website"]);
-            $user->setCompanyPicture($form["companyPicture"]);
-            $user->setCompanyType($form["companyType"]);
+            // on instancie un nouveau compte
+            $account = new Account();
+            // on hydrate l'objet account
+            $account->hydrate($user);
 
             // On sauvegarde en base de donnée
-            $entityManager->persist($user);
+            $entityManager->persist($account);
             $entityManager->flush();
             
             // on change le code de réponse
@@ -85,8 +67,11 @@ class AccountController extends AbstractController
     public function getUsers(): Response
     {
         $response = $this->getDoctrine()->getRepository(User::class)->findAll();
-        var_dump($response);
+        ?>
+        <pre>
+            <?= var_dump($response);?>
+        </pre>
+        <?php
         return new Response();
     }
 }
-
