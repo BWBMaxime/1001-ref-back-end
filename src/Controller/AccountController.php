@@ -13,7 +13,7 @@ use App\Entity\User;
 class AccountController extends AbstractController
 { 
     /**
-     * @Route("/sign-in", name="account", methods={"POST"})
+     * @Route("/register", name="account", methods={"POST"})
      */
     public function createUser (Request $request): Response
     {
