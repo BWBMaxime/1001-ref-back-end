@@ -50,13 +50,25 @@ class Product
     private $new;
 
     /**
-     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product")
+     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product", cascade={"persist"})
      */
     private $variations;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tags::class)
+     */
+    private $tags;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $owner;
 
     public function __construct()
     {
         $this->variations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +174,42 @@ class Product
                 $variation->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tags[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tags $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tags $tag): self
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
