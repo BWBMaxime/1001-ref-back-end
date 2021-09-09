@@ -55,7 +55,7 @@ class Product
     private $variations;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tags::class)
+     * @ORM\ManyToMany(targetEntity=Tags::class,cascade={"persist"})
      */
     private $tags;
 

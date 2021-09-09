@@ -116,6 +116,11 @@ class User
      */
     private $products;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
     public function __construct()
     {
         $this->favorites = new ArrayCollection();
@@ -402,6 +407,18 @@ class User
                 $product->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }
