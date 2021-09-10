@@ -31,5 +31,23 @@ class ProductController extends AbstractController
         return new Response('Saved new product with id '.$product->getId());
 
     }
+
+
+    /**
+     * @Route("/getProducts", name="products", methods={"GET"})
+     */
+    public function getAllProducts(): Response
+    {
+        $response = $this->getDoctrine()->getRepository(Product::class)->findAll();
+        ?>
+        <pre>
+            <?= var_dump($response);?>
+        </pre>
+        <?php
+        
+        return new Response();
+    }
+
+
 }
 
