@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AccountController extends AbstractController
 { 
     /**
-     * @Route("/sign-in/", name="account", methods={"POST"})
+     * @Route("/sign-in", name="account", methods={"POST"})
      */
     public function createUser (Request $request): Response
     {
@@ -21,4 +21,5 @@ class AccountController extends AbstractController
       return $response;
         
     }
+
 }

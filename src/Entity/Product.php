@@ -50,13 +50,25 @@ class Product
     private $new;
 
     /**
-     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product")
+     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product", cascade={"persist"})
      */
     private $variations;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tags::class,cascade={"persist"})
+     */
+    private $tags;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $owner;
 
     public function __construct()
     {
         $this->variations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,5 +176,76 @@ class Product
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Tags[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tags $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tags $tag): self
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Hydrates the product with a form
+     */
+    public function hydrate($data, $doctrine){
+
+        $this->setName($data['name']);
+        $this->setCategory($data['category']);
+        $this->setDescription($data['description']);
+        $this->setActive(false);
+        $this->setNew(true);
+
+        foreach ($data['variations'] as $variation) 
+        {
+
+            $newVariation = new Variation();
+
+            $newVariation->setProduct($this);
+            $newVariation->setContainer($variation['contenant']);
+            $newVariation->setConditioning($variation['conditionnement']);
+            $newVariation->setCapacity($variation['contenance']);
+            $newVariation->setDealerPrice($variation['prixRevendeur']);
+            $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+            $this->addVariation($newVariation);
+        }
+
+        foreach ($data['tags'] as $tag) 
+        {
+            $newTag = $doctrine->getRepository(Tags::class)->findOneBy(['name'=>$tag['name']]);
+            //$product->addTag($newTag);
+        }
+
+        $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>1]);
+        $this->setOwner($owner);
     }
 }
