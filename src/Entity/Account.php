@@ -41,6 +41,17 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $account;
 
+    public function hydrate($user)
+    {
+        $this->setAccount($user);
+
+        // on set le mail de l'entité User à la place de la propriété username de Account
+        $this->setUsername($user->getMail());
+
+        // set le password de l'entité User à la place de la propriété password de Account
+        $this->setPassword($user->getPassword());
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,6 +108,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setPassword(string $password): self
     {
+        
         $this->password = $password;
 
         return $this;
@@ -110,7 +122,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getSalt(): ?string
     {
-        return null;
+        return "bonjour";
     }
 
     /**

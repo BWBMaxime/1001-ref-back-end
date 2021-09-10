@@ -6,6 +6,9 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Address;
+use App\Entity\Account;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -36,7 +39,7 @@ class User
     private $company;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $mail;
 
@@ -111,11 +114,56 @@ class User
      */
     private $account;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="owner")
+     */
+    private $products;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
     public function __construct()
     {
         $this->favorites = new ArrayCollection();
         $this->subscribers = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
+
+
+    public function hydrate($form)
+    {
+        if(isset($form["name"]))$this->setName($form["name"]);
+        if(isset($form["firstname"]))$this->setFirstname($form["firstname"]);
+        if(isset($form["company"]))$this->setCompany($form["company"]);
+        if(isset($form["phone"]))$this->setPhone($form["phone"]);
+        if(isset($form["mail"]))$this->setMail($form["mail"]);
+        if(isset($form["password"]))$this->setPassword($form["password"]);
+        if(isset($form["siret"]))$this->setSiret($form["siret"]);
+        if(isset($form["biography"]))$this->setBiography($form["biography"]);
+        if(isset($form["companyLogo"]))$this->setCompanyLogo($form["companyLogo"]);
+
+        if(isset($form['address'])){
+            $newAddress = new Address();
+            $newAddress->setNumber($form['address']['number']);
+            $newAddress->setRoad($form['address']['road']);
+            $newAddress->setCity($form['address']['city']);
+            $newAddress->setZipcode($form['address']['zipcode']);
+            $newAddress->setCountry($form['address']['country']);
+            
+            $this->setAddress($newAddress);
+        }
+
+        if(isset($form["facebook"]))$this->setFacebook($form["facebook"]);
+        if(isset($form["linkedin"]))$this->setLinkedin($form["linkedin"]);
+        if(isset($form["website"]))$this->setWebsite($form["website"]);
+        if(isset($form["companyPicture"]))$this->setCompanyPicture($form["companyPicture"]);
+        if(isset($form["companyType"]))$this->setCompanyType($form["companyType"]);
+        if(isset($form["role"]))$this->setRole($form["role"]);
+
+    }
+
 
     public function getId(): ?int
     {
@@ -366,6 +414,48 @@ class User
         }
 
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getOwner() === $this) {
+                $product->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }
