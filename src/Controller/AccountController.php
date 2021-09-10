@@ -60,6 +60,52 @@ class AccountController extends AbstractController
         return $response;
     }
 
+    /**
+     * @Route("/user/update", name="updateUser", methods={"POST"})
+     */
+    public function updateUser (Request $request): Response
+    {
+
+        // On décode les données envoyées
+        $form = $request->toArray();
+
+        // on initialise le code de réponse
+        $code = 409;
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = $entityManager->getRepository(User::class)->find(['id' => $form['id']]);
+        
+        //Si l'utilisateur existe bien on le met a jour
+        if($user != null){
+
+            // On hydrate l'objet user
+            $user->hydrate($form);
+
+
+            // On sauvegarde la mise a jour
+            $entityManager->persist($user);
+            $entityManager->flush();
+            
+            // on change le code de réponse
+            $code = 201;
+            $response = new Response(
+              'Utilisateur mit a jour',
+              Response::HTTP_OK,
+              ['Access-Control-Allow-Origin' => '*']
+          );
+
+            // On retourne la confirmation
+            return $response;
+
+        }
+        return $response = new Response(
+          "Utilisateur n'existe pas",
+          Response::HTTP_NOT_FOUND,
+          ['Access-Control-Allow-Origin' => '*']
+      );
+    }
+
 
     /**
      * @Route("/getUsers", name="getUsers", methods={"GET"})
