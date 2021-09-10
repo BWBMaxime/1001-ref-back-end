@@ -84,7 +84,7 @@ class AccountController extends AbstractController
 
 
             // On sauvegarde la mise a jour
-            $entityManager->persist($account);
+            $entityManager->persist($user);
             $entityManager->flush();
             
             // on change le code de réponse
