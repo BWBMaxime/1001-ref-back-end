@@ -18,7 +18,7 @@ class AccountController extends AbstractController
     public function createUser (Request $request): Response
     {
 
-        $response = $this->json($request->toArray(),Response::HTTP_OK,[],[]);
+        $response = new Response();
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         // On décode les données envoyées
