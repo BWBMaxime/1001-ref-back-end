@@ -6,6 +6,9 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Address;
+use App\Entity\Account;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -36,7 +39,7 @@ class User
     private $company;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $mail;
 
@@ -127,6 +130,39 @@ class User
         $this->subscribers = new ArrayCollection();
         $this->products = new ArrayCollection();
     }
+
+
+    public function hydrate($form)
+    {
+        $this->setName($form["name"]);
+        $this->setFirstname($form["firstname"]);
+        $this->setCompany($form["company"]);
+        $this->setPhone($form["phone"]);
+        $this->setMail($form["mail"]);
+        $this->setPassword($form["password"]);
+        $this->setSiret($form["siret"]);
+        $this->setBiography($form["biography"]);
+        $this->setCompanyLogo($form["companyLogo"]);
+
+        $newAddress = new Address();
+        $newAddress->setNumber($form['address']['number']);
+        $newAddress->setRoad($form['address']['road']);
+        $newAddress->setCity($form['address']['city']);
+        $newAddress->setZipcode($form['address']['zipcode']);
+        $newAddress->setCountry($form['address']['country']);
+
+        $this->setAddress($newAddress);
+
+        $this->setFacebook($form["facebook"]);
+        $this->setLinkedin($form["linkedin"]);
+        $this->setWebsite($form["website"]);
+        $this->setCompanyPicture($form["companyPicture"]);
+        $this->setCompanyType($form["companyType"]);
+        // set le rôle à distributeur ou producteur
+        $this->setRole($form["role"]);
+
+    }
+
 
     public function getId(): ?int
     {
