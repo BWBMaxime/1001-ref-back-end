@@ -131,17 +131,18 @@ class AccountController extends AbstractController
         $form = $request->toArray();
 
         $entityManager = $this->getDoctrine()->getManager();
-
+        // On récupère l'utilisateur correspondant
         $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
-
+        // Si on ne le trouve pas, on réponds un message d'erreur 
         if($user == null){
             $response = new Response(
                 "Utilisateur n'existe pas",
                 Response::HTTP_NOT_FOUND,
                 ['Access-Control-Allow-Origin' => '*']
             );
-                    
-        }else
+        }
+        // Sinon on envoies l'id
+        else
         {
             $userId = $user->getId();
             $response = new Response(
