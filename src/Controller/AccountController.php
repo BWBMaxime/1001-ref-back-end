@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
+use Serializable;
 
 class AccountController extends AbstractController
 { 
@@ -119,5 +120,36 @@ class AccountController extends AbstractController
         </pre>
         <?php
         return new Response();
+    }
+
+    /**
+     * @Route("/getCred", name="getCred", methods={"POST"})
+     */
+    public function getCredentials(Request $request): Response
+    {
+        // On décode les données envoyées
+        $form = $request->toArray();
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
+
+        if($user == null){
+            $response = new Response(
+                "Utilisateur n'existe pas",
+                Response::HTTP_NOT_FOUND,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+                    
+        }else
+        {
+            $userId = $user->getId();
+            $response = new Response(
+                $userId,
+                Response::HTTP_ACCEPTED,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }        
+        return $response;
     }
 }
