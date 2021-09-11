@@ -120,4 +120,19 @@ class AccountController extends AbstractController
         <?php
         return new Response();
     }
+
+    /**
+     * @Route("/profil", name="profil", methods={"GET"})
+     */
+    public function getProfil(): Response
+    {
+        $response = $this->getDoctrine()->getManager()->getRepository(User::class)->find(1);
+
+        ?>
+        <pre>
+            <?= var_dump($response);?>
+        </pre>
+        <?php
+        return new Response();
+    }
 }
