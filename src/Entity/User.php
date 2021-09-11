@@ -145,14 +145,17 @@ class User
         if(isset($form["companyLogo"]))$this->setCompanyLogo($form["companyLogo"]);
 
         if(isset($form['address'])){
-            $newAddress = new Address();
-            $newAddress->setNumber($form['address']['number']);
-            $newAddress->setRoad($form['address']['road']);
-            $newAddress->setCity($form['address']['city']);
-            $newAddress->setZipcode($form['address']['zipcode']);
-            $newAddress->setCountry($form['address']['country']);
+
+            $address = $this->getAddress();
+            if($address == null) $address = new Address();
+
+            $address->setNumber($form['address']['number']);
+            $address->setRoad($form['address']['road']);
+            $address->setCity($form['address']['city']);
+            $address->setZipcode($form['address']['zipcode']);
+            $address->setCountry($form['address']['country']);
             
-            $this->setAddress($newAddress);
+            $this->setAddress($address);
         }
 
         if(isset($form["facebook"]))$this->setFacebook($form["facebook"]);
