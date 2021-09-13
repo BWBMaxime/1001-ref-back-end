@@ -34,11 +34,12 @@ class ProductController extends AbstractController
 
 
     /**
-     * @Route("/getProducts", name="products", methods={"GET"})
+     * @Route("/getProducts/{id}", name="getProducts", methods={"GET"})
      */
-    public function getAllProducts(): Response
+    public function getProductsByUserId(int $id): Response
     {
-        $response = $this->getDoctrine()->getRepository(Product::class)->findAll();
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        $response = $this->getDoctrine()->getRepository(Product::class)->findBy($user);
         ?>
         <pre>
             <?= var_dump($response);?>
