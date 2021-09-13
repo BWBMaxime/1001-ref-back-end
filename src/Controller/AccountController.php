@@ -9,7 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
-use Serializable;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class AccountController extends AbstractController
 { 
@@ -125,7 +129,7 @@ class AccountController extends AbstractController
     /**
      * @Route("/producer/preview", name="preview", methods={"GET"})
      */
-    public function getUserById(int $id): Response
+    public function getUserByIdCurrent(int $id): Response
     {
         $response = $this->getDoctrine()->getRepository(User::class)->find($id);
         ?>
@@ -135,6 +139,19 @@ class AccountController extends AbstractController
         <?php
         return new Response(
             $response,
+        );
+    }
+
+    /**
+     * @Route("/user/get/{id}", name="getUser", methods={"GET"})
+     */
+    public function getUserById(int $id): Response
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        $result = $this->getSerializer()->serialize($user, 'json');
+
+        return new Response(
+            $result,
             Response::HTTP_OK,
             ['Access-Control-Allow-Origin' => '*']
         );
@@ -172,5 +189,16 @@ class AccountController extends AbstractController
             );
         }        
         return $response;
+    }
+
+    private function getSerializer(){
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+            return $object->getId();
+        },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        return new Serializer([$normalizer], [$encoder]);
     }
 }
