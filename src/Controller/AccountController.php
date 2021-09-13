@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
+use Serializable;
 
 class AccountController extends AbstractController
 { 
@@ -134,5 +135,39 @@ class AccountController extends AbstractController
         </pre>
         <?php
         return new Response();
+
+        
+    /**
+     * @Route("/getCred", name="getCred", methods={"POST"})
+     */
+    public function getCredentials(Request $request): Response
+    {
+        // On décode les données envoyées
+        $form = $request->toArray();
+
+        $entityManager = $this->getDoctrine()->getManager();
+        // On récupère l'utilisateur correspondant
+        $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
+        // Si on ne le trouve pas, on réponds un message d'erreur 
+        if($user == null){
+            $response = new Response(
+                "Utilisateur n'existe pas",
+                Response::HTTP_UNAUTHORIZED,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }
+        // Sinon on envoies l'id et son role 
+        else
+        {
+            $userId = $user->getId();
+            $userRole = $user->getRole();
+            $credentials = array('userId'=>$userId, 'userRole'=>$userRole);
+            $response = new Response(
+                json_encode($credentials),
+                Response::HTTP_ACCEPTED,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }        
+        return $response;
     }
 }

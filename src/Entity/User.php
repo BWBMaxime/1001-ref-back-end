@@ -24,78 +24,78 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $company;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
      */
     private $mail;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $siret;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $phone;
 
     /**
-     * @ORM\Column(type="string", length=500)
+     * @ORM\Column(type="string", length=500, nullable=true)
      */
     private $biography;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $companyLogo;
 
     /**
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $facebook;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $linkedin;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $website;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable=true)
      */
     private $companyPicture;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $companyType;
 
@@ -145,14 +145,17 @@ class User
         if(isset($form["companyLogo"]))$this->setCompanyLogo($form["companyLogo"]);
 
         if(isset($form['address'])){
-            $newAddress = new Address();
-            $newAddress->setNumber($form['address']['number']);
-            $newAddress->setRoad($form['address']['road']);
-            $newAddress->setCity($form['address']['city']);
-            $newAddress->setZipcode($form['address']['zipcode']);
-            $newAddress->setCountry($form['address']['country']);
+
+            $address = $this->getAddress();
+            if($address == null) $address = new Address();
+
+            $address->setNumber($form['address']['number']);
+            $address->setRoad($form['address']['road']);
+            $address->setCity($form['address']['city']);
+            $address->setZipcode($form['address']['zipcode']);
+            $address->setCountry($form['address']['country']);
             
-            $this->setAddress($newAddress);
+            $this->setAddress($address);
         }
 
         if(isset($form["facebook"]))$this->setFacebook($form["facebook"]);
