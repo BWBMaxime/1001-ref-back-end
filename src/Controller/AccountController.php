@@ -129,7 +129,7 @@ class AccountController extends AbstractController
     /**
      * @Route("/user/get/{id}", name="getUser", methods={"GET"})
      */
-    public function getUser(int $id): Response
+    public function getUserById(int $id): Response
     {
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         $result = $this->getSerializer()->serialize($user, 'json');
