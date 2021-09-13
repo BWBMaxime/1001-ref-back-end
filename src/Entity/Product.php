@@ -241,11 +241,16 @@ class Product
 
         foreach ($data['tags'] as $tag) 
         {
-            $newTag = $doctrine->getRepository(Tags::class)->findOneBy(['name'=>$tag['name']]);
-            //$product->addTag($newTag);
+            $newTag = $doctrine->getRepository(Tags::class)->findOneBy(['name'=>$tag]);
+            if($newTag == null){
+                $newTag = new Tags();
+                $newTag->setName($tag);
+            }
+            $this->addTag($newTag);
         }
 
-        $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>1]);
+        
+        $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>$data['userId']]);
         $this->setOwner($owner);
     }
 }

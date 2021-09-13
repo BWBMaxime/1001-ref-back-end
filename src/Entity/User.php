@@ -24,78 +24,78 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $company;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
      */
     private $mail;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $siret;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $phone;
 
     /**
-     * @ORM\Column(type="string", length=500)
+     * @ORM\Column(type="string", length=500, nullable=true)
      */
     private $biography;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $companyLogo;
 
     /**
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $facebook;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $linkedin;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $website;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable=true)
      */
     private $companyPicture;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $companyType;
 
@@ -134,32 +134,36 @@ class User
 
     public function hydrate($form)
     {
-        $this->setName($form["name"]);
-        $this->setFirstname($form["firstname"]);
-        $this->setCompany($form["company"]);
-        $this->setPhone($form["phone"]);
-        $this->setMail($form["mail"]);
-        $this->setPassword($form["password"]);
-        $this->setSiret($form["siret"]);
-        $this->setBiography($form["biography"]);
-        $this->setCompanyLogo($form["companyLogo"]);
+        if(isset($form["name"]))$this->setName($form["name"]);
+        if(isset($form["firstname"]))$this->setFirstname($form["firstname"]);
+        if(isset($form["company"]))$this->setCompany($form["company"]);
+        if(isset($form["phone"]))$this->setPhone($form["phone"]);
+        if(isset($form["mail"]))$this->setMail($form["mail"]);
+        if(isset($form["password"]))$this->setPassword($form["password"]);
+        if(isset($form["siret"]))$this->setSiret($form["siret"]);
+        if(isset($form["biography"]))$this->setBiography($form["biography"]);
+        if(isset($form["companyLogo"]))$this->setCompanyLogo($form["companyLogo"]);
 
-        $newAddress = new Address();
-        $newAddress->setNumber($form['address']['number']);
-        $newAddress->setRoad($form['address']['road']);
-        $newAddress->setCity($form['address']['city']);
-        $newAddress->setZipcode($form['address']['zipcode']);
-        $newAddress->setCountry($form['address']['country']);
+        if(isset($form['address'])){
 
-        $this->setAddress($newAddress);
+            $address = $this->getAddress();
+            if($address == null) $address = new Address();
 
-        $this->setFacebook($form["facebook"]);
-        $this->setLinkedin($form["linkedin"]);
-        $this->setWebsite($form["website"]);
-        $this->setCompanyPicture($form["companyPicture"]);
-        $this->setCompanyType($form["companyType"]);
-        // set le rôle à distributeur ou producteur
-        $this->setRole($form["role"]);
+            $address->setNumber($form['address']['number']);
+            $address->setRoad($form['address']['road']);
+            $address->setCity($form['address']['city']);
+            $address->setZipcode($form['address']['zipcode']);
+            $address->setCountry($form['address']['country']);
+            
+            $this->setAddress($address);
+        }
+
+        if(isset($form["facebook"]))$this->setFacebook($form["facebook"]);
+        if(isset($form["linkedin"]))$this->setLinkedin($form["linkedin"]);
+        if(isset($form["website"]))$this->setWebsite($form["website"]);
+        if(isset($form["companyPicture"]))$this->setCompanyPicture($form["companyPicture"]);
+        if(isset($form["companyType"]))$this->setCompanyType($form["companyType"]);
+        if(isset($form["role"]))$this->setRole($form["role"]);
 
     }
 

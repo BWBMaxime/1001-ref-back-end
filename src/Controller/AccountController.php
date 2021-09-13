@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
+use Serializable;
 
 class AccountController extends AbstractController
 { 
@@ -18,7 +19,7 @@ class AccountController extends AbstractController
     public function createUser (Request $request): Response
     {
 
-        $response = $this->json($request->toArray(),Response::HTTP_OK,[],[]);
+        $response = new Response();
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         // On décode les données envoyées
@@ -60,6 +61,52 @@ class AccountController extends AbstractController
         return $response;
     }
 
+    /**
+     * @Route("/user/update", name="updateUser", methods={"POST"})
+     */
+    public function updateUser (Request $request): Response
+    {
+
+        // On décode les données envoyées
+        $form = $request->toArray();
+
+        // on initialise le code de réponse
+        $code = 409;
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = $entityManager->getRepository(User::class)->find(['id' => $form['id']]);
+        
+        //Si l'utilisateur existe bien on le met a jour
+        if($user != null){
+
+            // On hydrate l'objet user
+            $user->hydrate($form);
+
+
+            // On sauvegarde la mise a jour
+            $entityManager->persist($user);
+            $entityManager->flush();
+            
+            // on change le code de réponse
+            $code = 201;
+            $response = new Response(
+              'Utilisateur mit a jour',
+              Response::HTTP_OK,
+              ['Access-Control-Allow-Origin' => '*']
+          );
+
+            // On retourne la confirmation
+            return $response;
+
+        }
+        return $response = new Response(
+          "Utilisateur n'existe pas",
+          Response::HTTP_NOT_FOUND,
+          ['Access-Control-Allow-Origin' => '*']
+      );
+    }
+
 
     /**
      * @Route("/getUsers", name="getUsers", methods={"GET"})
@@ -73,5 +120,39 @@ class AccountController extends AbstractController
         </pre>
         <?php
         return new Response();
+    }
+
+    /**
+     * @Route("/getCred", name="getCred", methods={"POST"})
+     */
+    public function getCredentials(Request $request): Response
+    {
+        // On décode les données envoyées
+        $form = $request->toArray();
+
+        $entityManager = $this->getDoctrine()->getManager();
+        // On récupère l'utilisateur correspondant
+        $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
+        // Si on ne le trouve pas, on réponds un message d'erreur 
+        if($user == null){
+            $response = new Response(
+                "Utilisateur n'existe pas",
+                Response::HTTP_UNAUTHORIZED,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }
+        // Sinon on envoies l'id et son role 
+        else
+        {
+            $userId = $user->getId();
+            $userRole = $user->getRole();
+            $credentials = array('userId'=>$userId, 'userRole'=>$userRole);
+            $response = new Response(
+                json_encode($credentials),
+                Response::HTTP_ACCEPTED,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }        
+        return $response;
     }
 }
