@@ -123,40 +123,43 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @Route("/profil", name="profil", methods={"GET"})
+     * @Route("/producer/preview", name="preview", methods={"GET"})
      */
-    public function getProfil(): Response
+    public function getUserById(int $id): Response
     {
-        $response = $this->getDoctrine()->getManager()->getRepository(User::class)->find(1);
-
+        $response = $this->getDoctrine()->getRepository(User::class)->find($id);
         ?>
         <pre>
             <?= var_dump($response);?>
         </pre>
         <?php
-        return new Response();
+        return new Response(
+            $response,
+            Response::HTTP_OK,
+            ['Access-Control-Allow-Origin' => '*']
+        );
+    }
 
-        
     /**
      * @Route("/getCred", name="getCred", methods={"POST"})
      */
     public function getCredentials(Request $request): Response
     {
-        // On décode les données envoyées
+        // On décode les données envoyées, on les transforme en tableau
         $form = $request->toArray();
 
         $entityManager = $this->getDoctrine()->getManager();
-        // On récupère l'utilisateur correspondant
+        // On récupère l'utilisateur et ça envoie les données grâce au mail et à son mot de passe
         $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
-        // Si on ne le trouve pas, on réponds un message d'erreur 
+        // Si on ne le trouve pas, on répond un message d'erreur 
         if($user == null){
             $response = new Response(
-                "Utilisateur n'existe pas",
+                "Cet utilisateur n'existe pas",
                 Response::HTTP_UNAUTHORIZED,
                 ['Access-Control-Allow-Origin' => '*']
             );
         }
-        // Sinon on envoies l'id et son role 
+        // Sinon si le mail et mdp correspond : on envoie l'id et son role 
         else
         {
             $userId = $user->getId();
