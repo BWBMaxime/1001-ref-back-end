@@ -137,16 +137,18 @@ class AccountController extends AbstractController
         if($user == null){
             $response = new Response(
                 "Utilisateur n'existe pas",
-                Response::HTTP_NOT_FOUND,
+                Response::HTTP_UNAUTHORIZED,
                 ['Access-Control-Allow-Origin' => '*']
             );
         }
-        // Sinon on envoies l'id
+        // Sinon on envoies l'id et son role 
         else
         {
             $userId = $user->getId();
+            $userRole = $user->getRole();
+            $credentials = array('userId'=>$userId, 'userRole'=>$userRole);
             $response = new Response(
-                $userId,
+                json_encode($credentials),
                 Response::HTTP_ACCEPTED,
                 ['Access-Control-Allow-Origin' => '*']
             );
