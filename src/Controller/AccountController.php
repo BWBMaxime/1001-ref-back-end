@@ -127,19 +127,25 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @Route("/producer/preview", name="preview", methods={"GET"})
+     * @Route("/profil/{id}", name="profil", methods={"GET"})
      */
-    public function getUserByIdCurrent(int $id): Response
+    public function getProfilById(int $id): Response
     {
-        $response = $this->getDoctrine()->getRepository(User::class)->find($id);
-        ?>
-        <pre>
-            <?= var_dump($response);?>
-        </pre>
-        <?php
-        return new Response(
-            $response,
-        );
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if($user == null){
+            return  new Response(
+                "Cet utilisateur est non trouvé",
+                Response::HTTP_NOT_FOUND,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        } else {
+            return new Response(
+                serialize($user),
+                Response::HTTP_OK,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        }        
     }
 
     /**
@@ -191,6 +197,9 @@ class AccountController extends AbstractController
         return $response;
     }
 
+    /**
+     * Permet de transformer l'objet en format json
+     */
     private function getSerializer(){
         $encoder = new JsonEncoder();
         $defaultContext = [
