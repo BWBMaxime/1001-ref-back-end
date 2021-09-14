@@ -48,19 +48,19 @@ class ProductController extends AbstractController
         $product = $entityManager->getRepository(Product::class)->findBy(array("id"=> $id));
         // dd($product);
         $result = $this->getSerializer()->serialize($product, 'json');
-        if ($product == null) {
-           $response = new Response(
-             $result,
-             Response::HTTP_NOT_FOUND,
-             ['Access-Control-Allow-Origin' => '*']
-            );
-        }else {
+        // if ($product == null) {
+        //    $response = new Response(
+        //      $result,
+        //      Response::HTTP_NOT_FOUND,
+        //      ['Access-Control-Allow-Origin' => '*']
+        //     );
+        // }else {
             $response = new Response(
                 $result,
                 Response::HTTP_OK,
                 ['Access-Control-Allow-Origin' => '*']
                );
-        }
+        // }
       
             return $response;
            
@@ -76,4 +76,10 @@ class ProductController extends AbstractController
         return new Serializer([$normalizer], [$encoder]);
     }
 }
+
+    //Gets all of the info from an existing user
+   
+
+
+
 
