@@ -74,11 +74,12 @@ class ProductController extends AbstractController
 
     private function dehydrate($products){
         foreach ($products as $product){
-            $product->setCategory = null;
-            $product->setDescription = null;
-            $product->setTags = null;
-            $product->setOwner = null;
+            $product->setCategory("");
+            $product->setDescription("");
+            // $product->clearTag();
+            $product->setOwner(null);
         }
+        
         
     }
 

@@ -202,6 +202,14 @@ class Product
         return $this;
     }
 
+
+                // public function clearTag(): self
+                // {
+                //     $this->tags = [] ;
+
+                //     return $this;
+                // }
+
     public function getOwner(): ?User
     {
         return $this->owner;
