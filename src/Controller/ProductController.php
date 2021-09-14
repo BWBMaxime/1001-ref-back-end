@@ -47,28 +47,50 @@ class ProductController extends AbstractController
         // on vérifie si l'utilisateur existe
         if($user ==  null){
             return new Response(
-                "L'utilisateur n'existe pas",
+                "L'utilisateur n'existe pas.",
                 response::HTTP_NOT_FOUND
             );
         }
 
         // on récupère tous les produits de l'utilisateur courant
         $products = $user->getProducts();
+        $this->dehydrate($products);
 
         // si l'utilisateur existe mais qu'il n'y a pas de produits
         if ($products->isEmpty()) {
             return new Response(
-                "L'utilisateur courant n'a pas de produits",
+                "L'utilisateur courant n'a pas de produits.",
                 Response::HTTP_NO_CONTENT
             );
         } else {
+            $products = $this->getSerializer()->serialize($products, 'json');
             return new Response(
-                serialize($products),
+                $products,
                 Response::HTTP_OK
             );
         }
 
     }
 
-}
+    private function dehydrate($products){
+        foreach ($products as $product){
+            $product->setCategory = null;
+            $product->setDescription = null;
+            $product->setTags = null;
+            $product->setOwner = null;
+        }
+        
+    }
 
+    private function getSerializer(){
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+            return $object->getId();
+            },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        return new Serializer([$normalizer], [$encoder]);
+    }
+
+}

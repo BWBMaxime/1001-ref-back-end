@@ -253,4 +253,5 @@ class Product
         $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>$data['userId']]);
         $this->setOwner($owner);
     }
+
 }
