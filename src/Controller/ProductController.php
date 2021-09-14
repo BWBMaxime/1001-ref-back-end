@@ -48,12 +48,20 @@ class ProductController extends AbstractController
         $product = $entityManager->getRepository(Product::class)->findBy(array("id"=> $id));
         // dd($product);
         $result = $this->getSerializer()->serialize($product, 'json');
-
-       $response = new Response(
+        if ($product == null) {
+           $response = new Response(
              $result,
-             Response::HTTP_OK,
+             Response::HTTP_NOT_FOUND,
              ['Access-Control-Allow-Origin' => '*']
             );
+        }else {
+            $response = new Response(
+                $result,
+                Response::HTTP_OK,
+                ['Access-Control-Allow-Origin' => '*']
+               );
+        }
+      
             return $response;
            
     }
