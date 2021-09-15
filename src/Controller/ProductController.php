@@ -72,6 +72,9 @@ class ProductController extends AbstractController
 
     }
 
+    /**
+     * alleviate the datas sent to the front by setting products properties to null or an empty string
+     */
     private function dehydrate($products){
         foreach ($products as $product){
             $product->setCategory("");
@@ -80,6 +83,15 @@ class ProductController extends AbstractController
             $product->setOwner(null);
         }
         
+        
+    }
+
+
+    /**
+     * delete a product from database by its id
+     * @param int $id
+     */
+    private function deleteProductById($id){
         
     }
 
