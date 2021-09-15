@@ -11,6 +11,11 @@ use App\Entity\Product;
 use App\Entity\Variation;
 use App\Entity\Tags;
 use App\Entity\User;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 
 
 class ProductController extends AbstractController
@@ -31,5 +36,64 @@ class ProductController extends AbstractController
         return new Response('Saved new product with id '.$product->getId());
 
     }
+
+
+    /**
+     * @Route("/getProducts/{id}", name="getProducts", methods={"GET"})
+     */
+    public function getProductsByUserId(int $id): Response
+    {
+        // on récupère un utilisateur par son id
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        // on vérifie si l'utilisateur existe
+        if($user ==  null){
+            return new Response(
+                "L'utilisateur n'existe pas.",
+                response::HTTP_NOT_FOUND
+            );
+        }
+
+        // on récupère tous les produits de l'utilisateur courant
+        $products = $user->getProducts();
+        $this->dehydrate($products);
+
+        // si l'utilisateur existe mais qu'il n'y a pas de produits
+        if ($products->isEmpty()) {
+            return new Response(
+                "L'utilisateur courant n'a pas de produits.",
+                Response::HTTP_NO_CONTENT
+            );
+        } else {
+            $products = $this->getSerializer()->serialize($products, 'json');
+            return new Response(
+                $products,
+                Response::HTTP_OK
+            );
+        }
+
+    }
+
+    private function dehydrate($products){
+        foreach ($products as $product){
+            $product->setCategory("");
+            $product->setDescription("");
+            // $product->setTags();
+            $product->setOwner(null);
+        }
+        
+    }
+
+    private function getSerializer(){
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+            return $object->getId();
+            },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        return new Serializer([$normalizer], [$encoder]);
+    }
+
 }
 

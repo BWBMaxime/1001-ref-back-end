@@ -140,11 +140,13 @@ class AccountController extends AbstractController
                 ['Access-Control-Allow-Origin' => '*']
             );
         } else {
+            $user = $this->getSerializer()->serialize($user, 'json');
             return new Response(
-                serialize($user),
+                $user,
                 Response::HTTP_OK,
                 ['Access-Control-Allow-Origin' => '*']
             );
+            
         }        
     }
 
