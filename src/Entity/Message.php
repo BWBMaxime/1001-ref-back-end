@@ -108,4 +108,13 @@ class Message
 
         return $this;
     }
+
+    public function hydrate($data, $doctrine){
+        $this->setStatus(true);
+        $this->setSendDate(new \DateTime());
+        $this->setSender($doctrine->getRepository(User::class)->findOneBy(['id'=>$data['senderID']]));
+        $this->setTarget($doctrine->getRepository(User::class)->findOneBy(['id'=>$data['targetID']]));
+        $this->setBody($data['body']);
+
+    }
 }

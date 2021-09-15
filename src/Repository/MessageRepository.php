@@ -19,32 +19,41 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-    // /**
-    //  * @return Message[] Returns an array of Message objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+    /**
+    * @return Message[] Returns the info nedded to display the overview of message headers
     */
+    public function findHeadersByUser($user)
+    {
+        return $this->createQueryBuilder('message')
+        ->select('DISTINCT u.id','m.body','u.name','u.firstname','u.company')
+        ->from('App\Entity\Message', 'm')
+        ->where('m.target = :id')
+        //->orderBy('m.sendDate', 'ASC')
+        ->setParameter('id', $user)
+        ->leftJoin('m.sender', 'u')
+        ->getQuery()
+        ->getResult();
+    }
 
-    /*
-    public function findOneBySomeField($value): ?Message
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
+    /**
+    * @return Message[] Returns the info of all messages nedded to display a conversation between 2 given users
     */
+    public function findConversations($sender,$target)
+    {
+        return $this->createQueryBuilder('message')
+        ->select('DISTINCT m.body','(m.sender) AS sender','(m.target) AS target')
+        ->from('App\Entity\Message', 'm')
+        ->where('m.target = :target')
+        ->orWhere('m.sender = :target')
+        ->andWhere('m.sender = :sender')
+        ->orWhere('m.target = :sender')
+        //->orderBy('m.sendDate', 'ASC')
+        ->setParameters(array('target'=>$target,'sender'=>$sender))
+        ->getQuery()
+        ->getResult();
+    }
+    
+
+
+
 }
