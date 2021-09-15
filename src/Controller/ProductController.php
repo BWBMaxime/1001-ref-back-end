@@ -45,7 +45,7 @@ class ProductController extends AbstractController
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $product = $entityManager->getRepository(Product::class)->findBy(array("id"=> $id));
+        $product = $entityManager->getRepository(Product::class)->find($id);
         // dd($product);
         $result = $this->getSerializer()->serialize($product, 'json');
         // if ($product == null) {
