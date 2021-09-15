@@ -202,6 +202,14 @@ class Product
         return $this;
     }
 
+
+                // public function clearTag(): self
+                // {
+                //     $this->tags = [] ;
+
+                //     return $this;
+                // }
+
     public function getOwner(): ?User
     {
         return $this->owner;
@@ -253,4 +261,5 @@ class Product
         $owner = $doctrine->getRepository(User::class)->findOneBy(['id'=>$data['userId']]);
         $this->setOwner($owner);
     }
+
 }

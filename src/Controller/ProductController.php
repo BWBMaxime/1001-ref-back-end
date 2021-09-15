@@ -77,13 +77,26 @@ class ProductController extends AbstractController
 
     }
 
+    /**
+     * alleviate the datas sent to the front by setting products properties to null or an empty string
+     */
     private function dehydrate($products){
         foreach ($products as $product){
             $product->setCategory("");
             $product->setDescription("");
-            // $product->setTags();
+            // $product->clearTag();
             $product->setOwner(null);
         }
+        
+        
+    }
+
+
+    /**
+     * delete a product from database by its id
+     * @param int $id
+     */
+    private function deleteProductById($id){
         
     }
 
@@ -92,16 +105,10 @@ class ProductController extends AbstractController
         $defaultContext = [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
             return $object->getId();
-        },
+            },
         ];
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         return new Serializer([$normalizer], [$encoder]);
     }
+
 }
-
-    //Gets all of the info from an existing user
-   
-
-
-
-
