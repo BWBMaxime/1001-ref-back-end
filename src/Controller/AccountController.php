@@ -127,6 +127,30 @@ class AccountController extends AbstractController
     }
 
     /**
+     * @Route("/profil/{id}", name="profil", methods={"GET"})
+     */
+    public function getProfilById(int $id): Response
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if($user == null){
+            return  new Response(
+                "Cet utilisateur est non trouvé",
+                Response::HTTP_NOT_FOUND,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+        } else {
+            $user = $this->getSerializer()->serialize($user, 'json');
+            return new Response(
+                $user,
+                Response::HTTP_OK,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+            
+        }        
+    }
+
+    /**
      * @Route("/user/get/{id}", name="getUser", methods={"GET"})
      */
     public function getUserById(int $id): Response
@@ -147,21 +171,21 @@ class AccountController extends AbstractController
      */
     public function getCredentials(Request $request): Response
     {
-        // On décode les données envoyées
+        // On décode les données envoyées, on les transforme en tableau
         $form = $request->toArray();
 
         $entityManager = $this->getDoctrine()->getManager();
-        // On récupère l'utilisateur correspondant
+        // On récupère l'utilisateur et ça envoie les données grâce au mail et à son mot de passe
         $user = $entityManager->getRepository(User::class)->findOneBy(['mail' => $form["mail"],'password' => $form["password"]]);
-        // Si on ne le trouve pas, on réponds un message d'erreur 
+        // Si on ne le trouve pas, on répond un message d'erreur 
         if($user == null){
             $response = new Response(
-                "Utilisateur n'existe pas",
+                "Cet utilisateur n'existe pas",
                 Response::HTTP_UNAUTHORIZED,
                 ['Access-Control-Allow-Origin' => '*']
             );
         }
-        // Sinon on envoies l'id et son role 
+        // Sinon si le mail et mdp correspond : on envoie l'id et son role 
         else
         {
             $userId = $user->getId();
@@ -176,6 +200,9 @@ class AccountController extends AbstractController
         return $response;
     }
 
+    /**
+     * Permet de transformer l'objet en format json
+     */
     private function getSerializer(){
         $encoder = new JsonEncoder();
         $defaultContext = [

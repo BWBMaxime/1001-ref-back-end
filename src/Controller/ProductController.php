@@ -19,6 +19,8 @@ use App\Entity\Tags;
 use App\Entity\User;
 
 
+
+
 class ProductController extends AbstractController
 {
     /**
@@ -38,33 +40,53 @@ class ProductController extends AbstractController
 
     }
 
-    /**
-     * @Route("/product/{id}", name="product", methods={"GET"})
-     */
-    public  function getProduct(int $id): Response
-    {
-        $entityManager = $this->getDoctrine()->getManager();
 
-        $product = $entityManager->getRepository(Product::class)->find($id);
-        // dd($product);
-        $result = $this->getSerializer()->serialize($product, 'json');
-        // if ($product == null) {
-        //    $response = new Response(
-        //      $result,
-        //      Response::HTTP_NOT_FOUND,
-        //      ['Access-Control-Allow-Origin' => '*']
-        //     );
-        // }else {
-            $response = new Response(
-                $result,
-                Response::HTTP_OK,
-                ['Access-Control-Allow-Origin' => '*']
-               );
-        // }
-      
-            return $response;
-           
+    /**
+     * @Route("/getProducts/{id}", name="getProducts", methods={"GET"})
+     */
+    public function getProductsByUserId(int $id): Response
+    {
+        // on récupère un utilisateur par son id
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        // on vérifie si l'utilisateur existe
+        if($user ==  null){
+            return new Response(
+                "L'utilisateur n'existe pas.",
+                response::HTTP_NOT_FOUND
+            );
+        }
+
+        // on récupère tous les produits de l'utilisateur courant
+        $products = $user->getProducts();
+        $this->dehydrate($products);
+
+        // si l'utilisateur existe mais qu'il n'y a pas de produits
+        if ($products->isEmpty()) {
+            return new Response(
+                "L'utilisateur courant n'a pas de produits.",
+                Response::HTTP_NO_CONTENT
+            );
+        } else {
+            $products = $this->getSerializer()->serialize($products, 'json');
+            return new Response(
+                $products,
+                Response::HTTP_OK
+            );
+        }
+
     }
+
+    private function dehydrate($products){
+        foreach ($products as $product){
+            $product->setCategory("");
+            $product->setDescription("");
+            // $product->setTags();
+            $product->setOwner(null);
+        }
+        
+    }
+
     private function getSerializer(){
         $encoder = new JsonEncoder();
         $defaultContext = [
