@@ -132,6 +132,7 @@ class AccountController extends AbstractController
     public function getUserById(int $id): Response
     {
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+       
         $result = $this->getSerializer()->serialize($user, 'json');
 
         return new Response(
