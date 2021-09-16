@@ -24,7 +24,7 @@ use App\Entity\User;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product/create", name="product", methods={"POST"})
+     * @Route("/product/create", name="createproduct", methods={"POST"})
      */
     public function createProduct(Request $request): Response
     {
@@ -41,7 +41,7 @@ class ProductController extends AbstractController
     }
 
      /**
-     * @Route("/product/{id}", name="product", methods={"GET"})
+     * @Route("/product/{id}", name="getproduct", methods={"GET"})
      */
     public  function getProduct(int $id): Response
     {
