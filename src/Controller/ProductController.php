@@ -40,6 +40,35 @@ class ProductController extends AbstractController
 
     }
 
+     /**
+     * @Route("/product/{id}", name="product", methods={"GET"})
+     */
+    public  function getProduct(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $product = $entityManager->getRepository(Product::class)->find($id);
+        // dd($product);
+        $result = $this->getSerializer()->serialize($product, 'json');
+        // if ($product == null) {
+        //    $response = new Response(
+        //      $result,
+        //      Response::HTTP_NOT_FOUND,
+        //      ['Access-Control-Allow-Origin' => '*']
+        //     );
+        // }else {
+            $response = new Response(
+                $result,
+                Response::HTTP_OK,
+                ['Access-Control-Allow-Origin' => '*']
+               );
+        // }
+      
+            return $response;
+           
+    }
+
+
 
     /**
      * @Route("/getProducts/{id}", name="getProducts", methods={"GET"})
