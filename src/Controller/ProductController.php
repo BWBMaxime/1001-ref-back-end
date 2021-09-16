@@ -107,6 +107,42 @@ class ProductController extends AbstractController
     }
 
     /**
+     * @Route("/variation/delete/{id}", name="deleteVariation", methods={"DELETE"})
+     */
+    public function deleteVariationById(int $id): Response
+    {
+        // on fait appel au gestionnaire d'entité de doctrine
+        $em = $this->getDoctrine()->getManager();
+
+        // on récupère notre objet et on le pointe par son id
+        $variation = $em->getRepository(Variation::class)->find($id);
+        
+        // on vérifie si le produit existe
+        if($variation != null){
+            var_dump($variation->getProduct()->getName());
+
+            // on indique a Doctrine que l'on souhaite supprimer un produit
+            $em->remove($variation);
+
+            // applique le changement
+            $em->flush();
+
+            return new Response(
+                "Le produits a bien été supprimé.",
+                Response::HTTP_OK
+            );
+        } else {
+
+            return new Response(
+                "Ce produits n'existe pas.",
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+
+    /**
      * alleviate the datas sent to the front by setting products properties to null or an empty string
      */
     private function dehydrate($products){
@@ -119,15 +155,7 @@ class ProductController extends AbstractController
         
         
     }
-
-
-    /**
-     * delete a product from database by its id
-     * @param int $id
-     */
-    private function deleteProductById($id){
-        
-    }
+    
 
     private function getSerializer(){
         $encoder = new JsonEncoder();
