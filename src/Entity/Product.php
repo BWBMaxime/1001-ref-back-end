@@ -50,7 +50,7 @@ class Product
     private $new;
 
     /**
-     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Variation::class, mappedBy="product", orphanRemoval=true)
      */
     private $variations;
 
