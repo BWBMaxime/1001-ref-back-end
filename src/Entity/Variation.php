@@ -18,7 +18,7 @@ class Variation
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="variations",cascade={"remove"})
+     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="variations",cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;

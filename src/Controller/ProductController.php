@@ -73,22 +73,22 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/product/delete/{id}", name="deleteProduct", methods={"DELETE"})
+     * @Route("/variation/delete/{id}", name="deleteVariation", methods={"DELETE"})
      */
-    public function deleteProductById(int $id): Response
+    public function deleteVariationById(int $id): Response
     {
         // on fait appel au gestionnaire d'entité de doctrine
         $em = $this->getDoctrine()->getManager();
 
         // on récupère notre objet et on le pointe par son id
-        $product = $em->getRepository(Product::class)->find($id);
+        $variation = $em->getRepository(Variation::class)->find($id);
         
         // on vérifie si le produit existe
-        if($product != null){
-            var_dump($product->getName());
+        if($variation != null){
+            var_dump($variation->getProduct()->getName());
 
             // on indique a Doctrine que l'on souhaite supprimer un produit
-            $em->remove($product);
+            $em->remove($variation);
 
             // applique le changement
             $em->flush();
