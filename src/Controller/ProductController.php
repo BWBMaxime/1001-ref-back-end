@@ -39,6 +39,21 @@ class ProductController extends AbstractController
         return new Response('Saved new product with id '.$product->getId());
 
     }
+     /**
+     * @Route("/api/products", name="getminproducts", methods={"GET"})
+     */
+    public function getProducts(): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $products = $entityManager->getRepository(Product::class)->getMinimalProd();
+        $result = $this->getSerializer()->serialize($products, 'json');
+
+        $response = new Response(   $result,
+        Response::HTTP_OK,
+        ['Access-Control-Allow-Origin' => '*']);
+        return $response;
+    }
 
      /**
      * @Route("/product/{id}", name="getproduct", methods={"GET"})
