@@ -40,15 +40,13 @@ class ProductController extends AbstractController
 
     }
      /**
-     * @Route("/api/products", name="getminproducts", methods={"GET"})
+     * @Route("/api/products", name="geteveryproducts", methods={"GET"})
      */
     public function getProducts(): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
-
-        $products = $entityManager->getRepository(Product::class)->getMinimalProd();
+        $products = $entityManager->getRepository(Product::class)->findAll();
         $result = $this->getSerializer()->serialize($products, 'json');
-
         $response = new Response(   $result,
         Response::HTTP_OK,
         ['Access-Control-Allow-Origin' => '*']);

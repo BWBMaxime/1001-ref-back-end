@@ -19,19 +19,24 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-     /**
-      * @return Product[] Returns an array of Product objects
-      */
+    //  /**
+    //   * @return Product[] Returns an array of Product objects
+    //   */
     
-    public function getMinimalProd()
-    {
-        return $this->createQueryBuilder('products')
-            ->select('DISTINCT p.id', 'p.name', 'p.category', 'p.description', 'p.photo', 't.id')
-            ->from('App\Entity\Product', 'p')
-            ->leftJoin('p.tags', 't')
-            ->getQuery()
-            ->getResult();
-    }
+    // public function getMinimalProd()
+    // {
+    //     return $this->createQueryBuilder('products')
+    //         // ->select('DISTINCT p.id', 'p.name', 'p.category', 'p.description', 'p.photo')
+    //         // ->from('App\Entity\Product', 'p')
+    //         // ->addSelect('p.tags')
+    //         // ->from('App\Entity\Tags', 'tags')
+    //         ->from('App\Entity\Product', 'p')
+    //         ->from('App\Entity\Tags', 't')
+    //         ->join('p.tags', 't.name')
+    //         ->select('DISTINCT p.id', 'p.name', 'p.description', 'p.category', 'p.photo', 'p.tags')
+    //         ->getQuery()
+    //         ->getResult();
+    // }
     
 
     /*
