@@ -12,14 +12,10 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
-
 use App\Entity\Product;
 use App\Entity\Variation;
 use App\Entity\Tags;
 use App\Entity\User;
-
-
-
 
 class ProductController extends AbstractController
 {
@@ -40,7 +36,9 @@ class ProductController extends AbstractController
 
     }
 
-     /**
+
+
+    /**
      * @Route("/product/{id}", name="getproduct", methods={"GET"})
      */
     public  function getProduct(int $id): Response
@@ -106,6 +104,8 @@ class ProductController extends AbstractController
 
     }
 
+
+
     /**
      * @Route("/variation/delete/{id}", name="deleteVariation", methods={"DELETE"})
      */
@@ -142,6 +142,58 @@ class ProductController extends AbstractController
     }
 
 
+
+    /**
+     * @Route("/product/update/{id}", name="updateProduct", methods={"PUT"})
+     */
+    public function updateProduct(Request $request): Response
+    {
+        // decode the datas sent
+        $form = $request->toArray();
+
+        // initialization of an error code
+        $response = new Response(
+            "Conflit",
+            Response::HTTP_CONFLICT
+        );
+
+        // fetching the object from Doctrine
+        $em = $this->getDoctrine()->getManager();
+        $product = $em->getRepository(Product::class)->find(['id' => $form['id']]);
+
+        // if the product exist I update it
+        if($product != null){
+           
+            // hydrate product
+            $product->hydrate($form, $this->getDoctrine());
+
+            // save in database
+            $em->persist($product);
+            $em->flush();
+
+            // change the status code
+            $response = new Response(
+                'Produit mit à jour',
+                Response::HTTP_OK,
+                ['Access-Control-Allow-Origin' => '*']
+            );
+
+            // return confirmation
+            return $response;
+
+        }
+
+        return $response = new Response(
+            "Le produit n'existe pas",
+            Response::HTTP_NOT_FOUND,
+            ['Access-Control-Allow-Origin' => '*']
+        );
+       
+
+    }
+
+
+
     /**
      * alleviate the datas sent to the front by setting products properties to null or an empty string
      */
@@ -151,12 +203,15 @@ class ProductController extends AbstractController
             $product->setDescription("");
             // $product->clearTag();
             $product->setOwner(null);
-        }
-        
+        } 
         
     }
     
 
+
+    /**
+     * returns an object that serializes the doctrine entities into a json array
+     */
     private function getSerializer(){
         $encoder = new JsonEncoder();
         $defaultContext = [

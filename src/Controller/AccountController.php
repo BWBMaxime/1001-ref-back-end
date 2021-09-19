@@ -65,6 +65,8 @@ class AccountController extends AbstractController
         return $response;
     }
 
+
+
     /**
      * @Route("/user/update", name="updateUser", methods={"POST"})
      */
@@ -112,6 +114,7 @@ class AccountController extends AbstractController
     }
 
 
+
     /**
      * @Route("/getUsers", name="getUsers", methods={"GET"})
      */
@@ -125,6 +128,8 @@ class AccountController extends AbstractController
         <?php
         return new Response();
     }
+
+
 
     /**
      * @Route("/profil/{id}", name="profil", methods={"GET"})
@@ -150,6 +155,8 @@ class AccountController extends AbstractController
         }        
     }
 
+
+
     /**
      * @Route("/user/get/{id}", name="getUser", methods={"GET"})
      */
@@ -165,6 +172,8 @@ class AccountController extends AbstractController
             ['Access-Control-Allow-Origin' => '*']
         );
     }
+
+
 
     /**
      * @Route("/getCred", name="getCred", methods={"POST"})
@@ -200,8 +209,10 @@ class AccountController extends AbstractController
         return $response;
     }
 
+
+
     /**
-     * Permet de transformer l'objet en format json
+     * returns an object that serializes the doctrine entities into a json array
      */
     private function getSerializer(){
         $encoder = new JsonEncoder();
