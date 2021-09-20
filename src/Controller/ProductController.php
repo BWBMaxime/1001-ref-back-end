@@ -248,7 +248,10 @@ class ProductController extends AbstractController
      * 
      */
     private function dehydration($product){
-        $product->setOwner(null);
+        foreach($product->getOwner()->getProducts() as $products){
+            $products->getOwner()->getProducts()->removeElement($products);
+        }
+        
     }
 
 }
