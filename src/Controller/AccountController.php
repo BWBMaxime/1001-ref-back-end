@@ -199,7 +199,8 @@ class AccountController extends AbstractController
         {
             $userId = $user->getId();
             $userRole = $user->getRole();
-            $credentials = array('userId'=>$userId, 'userRole'=>$userRole);
+            $userBio = $user->getBiography();
+            $credentials = array('userId'=>$userId, 'userRole'=>$userRole, 'bio'=>$userBio);
             $response = new Response(
                 json_encode($credentials),
                 Response::HTTP_ACCEPTED,
