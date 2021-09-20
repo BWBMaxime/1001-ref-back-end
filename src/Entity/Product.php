@@ -230,21 +230,35 @@ class Product
         $this->setName($data['name']);
         $this->setCategory($data['category']);
         $this->setDescription($data['description']);
+        $this->setPhoto($data['photo']);
         $this->setActive(false);
         $this->setNew(true);
 
         foreach ($data['variations'] as $variation) 
         {
 
-            $newVariation = new Variation();
+            
+            // si la variation n'a pas d'id
+            if(!isset($variation['id'])){
 
-            $newVariation->setProduct($this);
-            $newVariation->setContainer($variation['contenant']);
-            $newVariation->setConditioning($variation['conditionnement']);
-            $newVariation->setCapacity($variation['contenance']);
-            $newVariation->setDealerPrice($variation['prixRevendeur']);
-            $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
-            $this->addVariation($newVariation);
+                $newVariation = new Variation();
+
+                $newVariation->setProduct($this);
+                $newVariation->setContainer($variation['contenant']);
+                $newVariation->setConditioning($variation['conditionnement']);
+                $newVariation->setCapacity($variation['contenance']);
+                $newVariation->setDealerPrice($variation['prixRevendeur']);
+                $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+                $this->addVariation($newVariation);
+            }else{
+
+                $oldVariation = $doctrine->getRepository(Variation::class)->find($variation['id']);
+                $oldVariation->setContainer($variation['contenant']);
+                $oldVariation->setConditioning($variation['conditionnement']);
+                $oldVariation->setCapacity($variation['contenance']);
+                $oldVariation->setDealerPrice($variation['prixRevendeur']);
+                $oldVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+            }
         }
 
         foreach ($data['tags'] as $tag) 
