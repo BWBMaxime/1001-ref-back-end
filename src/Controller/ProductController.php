@@ -35,6 +35,9 @@ class ProductController extends AbstractController
         return new Response('Saved new product with id '.$product->getId());
 
     }
+
+
+
      /**
      * @Route("/api/products", name="geteveryproducts", methods={"GET"})
      */
@@ -59,21 +62,24 @@ class ProductController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
 
         $product = $entityManager->getRepository(Product::class)->find($id);
-        // dd($product);
+        
+        $this->dehydration($product);
+        
+
         $result = $this->getSerializer()->serialize($product, 'json');
-        // if ($product == null) {
-        //    $response = new Response(
-        //      $result,
-        //      Response::HTTP_NOT_FOUND,
-        //      ['Access-Control-Allow-Origin' => '*']
-        //     );
-        // }else {
+        if ($product == null) {
+           $response = new Response(
+             $result,
+             Response::HTTP_NOT_FOUND,
+             ['Access-Control-Allow-Origin' => '*']
+            );
+        }else {
             $response = new Response(
                 $result,
                 Response::HTTP_OK,
                 ['Access-Control-Allow-Origin' => '*']
                );
-        // }
+        }
       
             return $response;
            
@@ -234,6 +240,15 @@ class ProductController extends AbstractController
         ];
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         return new Serializer([$normalizer], [$encoder]);
+    }
+
+
+
+    /**
+     * 
+     */
+    private function dehydration($product){
+        $product->setOwner(null);
     }
 
 }
