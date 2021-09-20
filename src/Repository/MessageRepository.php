@@ -28,7 +28,7 @@ class MessageRepository extends ServiceEntityRepository
         ->select('DISTINCT u.id','m.body','u.name','u.firstname','u.company')
         ->from('App\Entity\Message', 'm')
         ->where('m.target = :id')
-        //->orderBy('m.sendDate', 'ASC')
+        ->orWhere('m.sender = :id')
         ->setParameter('id', $user)
         ->leftJoin('m.sender', 'u')
         ->getQuery()
@@ -47,7 +47,6 @@ class MessageRepository extends ServiceEntityRepository
         ->orWhere('m.sender = :target')
         ->andWhere('m.sender = :sender')
         ->orWhere('m.target = :sender')
-        //->orderBy('m.sendDate', 'ASC')
         ->setParameters(array('target'=>$target,'sender'=>$sender))
         ->getQuery()
         ->getResult();
