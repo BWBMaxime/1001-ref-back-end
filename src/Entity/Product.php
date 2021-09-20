@@ -202,14 +202,6 @@ class Product
         return $this;
     }
 
-
-                // public function clearTag(): self
-                // {
-                //     $this->tags = [] ;
-
-                //     return $this;
-                // }
-
     public function getOwner(): ?User
     {
         return $this->owner;
@@ -221,6 +213,8 @@ class Product
 
         return $this;
     }
+
+
 
     /**
      * Hydrates the product with a form
@@ -244,20 +238,20 @@ class Product
                 $newVariation = new Variation();
 
                 $newVariation->setProduct($this);
-                $newVariation->setContainer($variation['contenant']);
-                $newVariation->setConditioning($variation['conditionnement']);
-                $newVariation->setCapacity($variation['contenance']);
-                $newVariation->setDealerPrice($variation['prixRevendeur']);
-                $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+                $newVariation->setContainer($variation['container']);
+                $newVariation->setConditioning($variation['conditioning']);
+                $newVariation->setCapacity($variation['capacity']);
+                $newVariation->setDealerPrice($variation['dealerPrice']);
+                $newVariation->setRestaurateurPrice($variation['restaurateurPrice']);
                 $this->addVariation($newVariation);
             }else{
 
                 $oldVariation = $doctrine->getRepository(Variation::class)->find($variation['id']);
-                $oldVariation->setContainer($variation['contenant']);
-                $oldVariation->setConditioning($variation['conditionnement']);
-                $oldVariation->setCapacity($variation['contenance']);
-                $oldVariation->setDealerPrice($variation['prixRevendeur']);
-                $oldVariation->setRestaurateurPrice($variation['prixRestaurateur']);
+                $oldVariation->setContainer($variation['container']);
+                $oldVariation->setConditioning($variation['conditioning']);
+                $oldVariation->setCapacity($variation['capacity']);
+                $oldVariation->setDealerPrice($variation['dealerPrice']);
+                $oldVariation->setRestaurateurPrice($variation['restaurateurPrice']);
             }
         }
 
