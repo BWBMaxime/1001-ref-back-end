@@ -230,19 +230,18 @@ class Product
 
         foreach ($data['variations'] as $variation) 
         {
-
-            
+        
             // si la variation n'a pas d'id
             if(!isset($variation['id'])){
 
                 $newVariation = new Variation();
 
                 $newVariation->setProduct($this);
-                $newVariation->setContainer($variation['container']);
-                $newVariation->setConditioning($variation['conditioning']);
-                $newVariation->setCapacity($variation['capacity']);
-                $newVariation->setDealerPrice($variation['dealerPrice']);
-                $newVariation->setRestaurateurPrice($variation['restaurateurPrice']);
+                $newVariation->setContainer($variation['contenant']);
+                $newVariation->setConditioning($variation['conditionnement']);
+                $newVariation->setCapacity($variation['contenance']);
+                $newVariation->setDealerPrice($variation['prixRevendeur']);
+                $newVariation->setRestaurateurPrice($variation['prixRestaurateur']);
                 $this->addVariation($newVariation);
             }else{
 
